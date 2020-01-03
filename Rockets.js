@@ -51,7 +51,28 @@ function Population(){
     }
 
     this.matingpool = [];
+
+    for(var i=0;i<this.popsize;i++){
+        var n = this.rockets[i].fitnes*maxfit;
+        for(var j=0;j<n;j++){
+            this.matingpool.add(this.rockets[i]);
+        }
+    }
+ 
 }
+
+    this.selection = function(){
+    var newRockets = [];
+    for(var i=0;i<this.rockets.length; i++){
+    var parentA = random(this.matingpool);
+    var parentB = random(this.matingpool);
+    var child = parentA.crossover(parentB)
+}
+
+     
+    }
+
+
 
     this.run = function(){
         for(var i=0;i<this.popsize;i++){
@@ -68,7 +89,21 @@ function DNA(){
         this.genes[i] = p5.Vector.random2D();
         this.genes[i].setMag(0.1);
     }    
+
+    this.crossover = function(partner){
+        var newgenes = [];
+        var mid = floor(random(genes.length))
+        for(var i =0;i<genes.length; i++){
+            if(i>mid)
+                newgenes[i] = this.genes[i];
+            else
+                newgenes[i] = this.partner[i];
+        }
+        return newdna(newgenes);
+    }
 }
+
+
 function Rocket(){
     this.pos = createVector(width/2, height);
     this.vel = createVector();
