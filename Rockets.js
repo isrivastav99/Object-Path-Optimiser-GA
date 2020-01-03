@@ -1,23 +1,57 @@
 var population;
 var lifespan = 250;
+var count = 0;
+var lifeP;
+var target;
+
 function setup(){
-    createCanvas(400,300);
+    createCanvas(700,600);
     rocket = new Rocket();
     population = new Population();
+    lifeP = createP();
+    target = createVector(width/2, 80);
 }
 
 function draw(){
     background(0);
     population.run();
+    lifeP.html(count);
+    count++;
+
+    if(count == lifespan){
+    population = new Population();
+    count = 0;
+    }
+    ellipse(target.x, target.y, 20,20);
+
 }
 
 function Population(){
     this.rockets = [];
     this.popsize = 25;
+    this.matingpool = [];
 
-    for(var i = 0; i<this.popsize; i++){
+    for(var i = 0; i < this.popsize; i++) {
         this.rockets[i] = new Rocket();   
     }
+
+    this.evaluate = function() {
+
+        var maxfit = 0;
+
+        for(var i=0; i<this.popsize; i++){
+            this.rockets[i].calcFitness();
+            if(this.rockets[i].fitness > maxfit){
+                maxfit = this.rockets[i].fitness;
+            }
+    }
+    
+    for(var i=0;i<this.popsize;i++){
+        this.rockets[i].fitnes /= maxfit;
+    }
+
+    this.matingpool = [];
+}
 
     this.run = function(){
         for(var i=0;i<this.popsize;i++){
@@ -32,6 +66,7 @@ function DNA(){
     this.genes = [];
     for(var i =0;i<lifespan; i++){
         this.genes[i] = p5.Vector.random2D();
+        this.genes[i].setMag(0.1);
     }    
 }
 function Rocket(){
@@ -39,14 +74,19 @@ function Rocket(){
     this.vel = createVector();
     this.acc = createVector();
     this.dna = new DNA();
-    this.count = 0; 
+    this.fitness = 0;
 
     this.applyForce = function(force){
         this.acc.add(force);
     }
+
+    this.calcFitness = function(){
+        var d = dist(this.pos.x, this.pos.y, target.x, target.y)
+        this.fitness = 1/d;
+
+    }
     this.update = function(){
-        this.applyForce(this.dna.genes[this.count]);
-        this.count++;
+        this.applyForce(this.dna.genes[count]);
         this.vel.add(this.acc);
         this.pos.add(this.vel);
         this.acc.mult(0);
