@@ -17,18 +17,36 @@ var rw = 200;
 var rh = 10;
 
 function setup() {
-  createCanvas(400, 300);
+  let canv = createCanvas(400, 300);
+  canv.position(350,0);
   population = new Population();
   lifeP = createP();
+  timer = createP();
   target = createVector(width / 2, 50);
+  
+
 
 }
-
+let time = 0;
 function draw() {
   background(0);
   population.run();
   // Displays count to window
-  lifeP.html(count);
+  lifeP.html('Life Count : ');
+  lifeP.html(count, true);
+  timer.html('Time elapsed: ');
+  let m = time/60;
+  
+  let t = m.toString();
+  let mi = parseInt(t);
+  timer.html(mi/60, true);
+  
+  timer.html(' minutes ', true);
+  timer.html(time%60, true);
+  timer.html(' seconds ', true);
+  if (frameCount % 60 == 0){
+  time++;
+  }
 
   count++;
   if (count == lifespan) {
